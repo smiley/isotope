@@ -7,8 +7,8 @@
 #include <Shlwapi.h>
 #pragma comment(lib, "Shlwapi.lib")
 
-#include <iostream>
 #include <assert.h>
+#include <iostream>
 #include <sstream>
 
 #include "Config.h"
@@ -18,21 +18,21 @@
 #include "Types.h"
 #include "Utilities.h"
 
-inline bool isDriveSpecifier(const std::string& string) {
+inline bool isDriveSpecifier(const std::wstring& string) {
     if (string.length() < 2) {
         return false;
     }
 
-    if ((tolower(string[0]) >= 'a') && (tolower(string[0]) <= 'z')) {
+    if ((towlower(string[0]) >= L'a') && (towlower(string[0]) <= L'z')) {
         // D...
-        if (string[1] == ':') {
+        if (string[1] == L':') {
             // D:...
             if (string.length() == 2) {
                 // D:
                 return true;
             }
 
-            if (string[2] == '\\') {
+            if (string[2] == L'\\') {
                 // D:\...
                 if (string.length() == 3) {
                     // D:\ 
@@ -51,8 +51,13 @@ inline bool isDriveSpecifier(const std::string& string) {
 std::wstring GetSelectedDrive(const std::string& commandLine) {
     std::wstring selectedDrive(toWide(commandLine));
 
-    if (!commandLine.empty()) {
-        if (!isDriveSpecifier(commandLine)) {
+    if ((selectedDrive[0] == L'"') && (selectedDrive[selectedDrive.size() - 1] == L'"')) {
+        selectedDrive = selectedDrive.substr(1, selectedDrive.size() - 2); // "-2" to skip the last quotation mark and
+                                                                           // to account for the first quotation mark.
+    }
+
+    if (!selectedDrive.empty()) {
+        if (!isDriveSpecifier(selectedDrive)) {
             MessageBoxA(nullptr, MESSAGES::WRONG_ARGUMENTS, APP_NAME, MB_ICONERROR);
             ExitProcess(1);
         }
