@@ -8,6 +8,7 @@
 
 const char* ASSERT_INSTANCE_ERROR_STRING = "Not bound to a real COM object!";
 
+// Implemented as a macro to ease debugging when "always_assert" quotes the filename & line.
 #define assert_instance() always_assert(m_instance != nullptr, ASSERT_INSTANCE_ERROR_STRING)
 
 const std::wstring ProgressDialog::UNSPECIFIED = std::wstring();
@@ -16,7 +17,6 @@ const std::wstring ProgressDialog::UNSPECIFIED = std::wstring();
 
 ProgressDialog::ProgressDialog(const std::wstring& title, HWND parent) :
     m_parent(parent) {
-    CoInitialize(nullptr);
 
     CLSID cls = { 0 };
     HRESULT status = CLSIDFromString(CLASS_GUID, &cls);
@@ -35,13 +35,12 @@ ProgressDialog::ProgressDialog(const std::wstring& title, HWND parent) :
 ProgressDialog::~ProgressDialog() {
     if (WaitForSingleObject(m_cancelThread, INFINITE) == WAIT_FAILED) {
         // D:
-        TerminateThread(m_cancelThread, -1);
+        TerminateThread(m_cancelThread, 0xFFFFFFFF);
     }
 
     auto localPointer = m_instance;
     m_instance = nullptr;
     localPointer->Release();
-    CoUninitialize();
 }
 
 void ProgressDialog::setTitle(const std::wstring & title) {
@@ -143,23 +142,21 @@ uint64_t ProgressDialog::getTotal() {
     return m_total;
 }
 
-void ProgressDialog::start(DialogOptions options) {
-    start(static_cast<int>(options));
-}
-
-void ProgressDialog::start(DWORD options) {
+void ProgressDialog::start(Options options) {
     assert_instance();
 
-    if (options & Indeterminate) {
-        options -= Indeterminate;
+    DWORD realOptions = static_cast<DWORD>(options);
+
+    if (realOptions & static_cast<DWORD>(Options::Indeterminate)) {
+        realOptions -= static_cast<DWORD>(Options::Indeterminate);
         if (IsWindowsVistaOrGreater()) {
-            options |= PROGDLG_MARQUEEPROGRESS;
+            realOptions |= PROGDLG_MARQUEEPROGRESS;
         } else {
-            options |= PROGDLG_NOPROGRESSBAR;
+            realOptions |= PROGDLG_NOPROGRESSBAR;
         }
     }
 
-    THROW_IF_FAILED(m_instance->StartProgressDialog(m_parent, nullptr, options, nullptr));
+    THROW_IF_FAILED(m_instance->StartProgressDialog(m_parent, nullptr, realOptions, nullptr));
     m_cancelThread = reinterpret_cast<HANDLE>(_beginthread(hasCancelledThreadFunction, 0, this));
 }
 
@@ -203,6 +200,12 @@ void ProgressDialog::setLine(unsigned int lineNumber, const std::wstring & line)
     assert_instance();
 
     THROW_IF_FAILED(m_instance->SetLine(lineNumber, line.c_str(), TRUE, nullptr));
+}
+
+ProgressDialog::Options operator|(ProgressDialog::Options one,
+                                  ProgressDialog::Options other) {
+    return static_cast<ProgressDialog::Options>(static_cast<DWORD>(one) |
+                                                static_cast<DWORD>(other));
 }
 
 #pragma endregion

@@ -17,7 +17,7 @@ DWORD GetOverlappedResults(HANDLE file, LPOVERLAPPED overlapped) {
 
     if (GetOverlappedResult(file, overlapped, &result, FALSE) == FALSE) {
         if (GetLastError() == ERROR_IO_PENDING) {
-            return -1;
+            return 0xFFFFFFFF;
         }
         throw WinAPIException(GetLastError());
     }

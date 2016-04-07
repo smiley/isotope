@@ -75,3 +75,61 @@ public:
 private:
     Handle m_eventHandle;
 };
+
+class Buffer {
+    class Pointer {
+        Pointer(Buffer& container) : m_container(container) {};
+    public:
+        template<typename PointerType>
+        operator PointerType*() {
+            return reinterpret_cast<PointerType*>(m_container.m_pointer);
+        }
+
+        template<typename PointerType>
+        operator const PointerType*() const {
+            return reinterpret_cast<const PointerType*>(m_container.m_pointer);
+        }
+
+    private:
+        Buffer& m_container;
+
+        // Disallow copy/assignment/move.
+        Pointer(const Pointer&);
+        Pointer(Pointer&&);
+        Pointer& operator=(const Pointer&);
+
+        // "Buffer" needs access to its inner class.
+        friend Buffer;
+    };
+
+public:
+    // "calloc" also zero-initializes the memory block it allocates.
+    Buffer(size_t size) : size(size), m_pointer(calloc(1, size)), address(*this) {
+        if (m_pointer == nullptr) {
+            throw std::bad_alloc();
+        }
+    };
+
+    template<typename StringType>
+    Buffer(const std::basic_string<StringType> source) :
+        size(source.size() * sizeof(StringType)),
+        m_pointer(calloc(1, size)),
+        address(*this) {
+        
+        if (m_pointer == nullptr) {
+            throw std::bad_alloc();
+        }
+
+        memcpy(m_pointer, source.data(), size);
+    }
+
+    ~Buffer() {
+        free(m_pointer);
+    }
+
+    const size_t size;
+    Pointer address;
+
+private:
+    void* m_pointer;
+};

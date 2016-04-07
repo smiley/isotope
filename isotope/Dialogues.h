@@ -6,12 +6,13 @@
 #include <string>
 #include <vector>
 
+#include "Shell.h"
 #include "Types.h"
 
 class ProgressDialog {
 public:
     using EventHandler = void(*)(ProgressDialog& instance, void* context);
-    enum DialogOptions {
+    enum class Options : DWORD {
         Normal = PROGDLG_NORMAL,
         // The progress dialog box will be modal to the window specified by hwndParent. By default, a progress
         // dialog box is modeless.
@@ -65,8 +66,7 @@ public:
     uint64_t getProgress();
     uint64_t getTotal();
 
-    void start(DialogOptions options = Normal);
-    void start(DWORD /* OR-ed DialogOptions */ options);
+    void start(Options options = Options::Normal);
     void stop();
 
     // Default handler for "setCancelHandler" & "setCompletionHandler" for apps that only want to close the dialog when
@@ -77,6 +77,8 @@ private:
     static void __cdecl hasCancelledThreadFunction(void* instance);
     void hasCancelledProcedure();
     void setLine(unsigned int lineNumber, const std::wstring& line);
+
+    CoInitializer m_initializer;
 
     IProgressDialog* m_instance = nullptr;
 
@@ -97,6 +99,10 @@ private:
     static const std::wstring UNSPECIFIED;
     const wchar_t* CLASS_GUID = L"{F8383852-FCD3-11d1-A6B9-006097DF5BD4}";
 };
+
+// Allow OR-ing "Options".
+ProgressDialog::Options operator|(ProgressDialog::Options one,
+                                  ProgressDialog::Options other);
 
 // Mark "NoProgressBar" as deprecated.
 #pragma deprecated(NoProgressBar)

@@ -152,28 +152,32 @@ HRESULT CALLBACK finishDialogCallback(HWND hwnd, UINT notification, WPARAM, LPAR
         }
 
         if (_wcsicmp(linkText, OPEN) == 0) {
-            // I thought to use "SHOpenFolderAndSelectItems" here, but that requires resolving a path to the
-            // shell namespace's ID format and that's just a bit too much effort JUST to open Explorer.
+            try {
+                OpenExplorerOnFile(*outputPath);
+                return S_OK;
+            } catch (const COMException&) {
+                // Fall back to an indirect, process-executing approach instead.
 
-            wchar_t explorerPath[MAX_PATH] = { 0 };
-            unsigned int written = GetWindowsDirectory(explorerPath, _countof(explorerPath));
-            if ((written > 0) && (written <= MAX_PATH)) {
-                if (PathAppend(explorerPath, FILES::EXPLORER_FILENAME) != FALSE) {
-                    std::wstringstream commandLineBuf;
-                    commandLineBuf << explorerPath << L" /select,\"" << *outputPath << L"\"";
+                wchar_t explorerPath[MAX_PATH] = { 0 };
+                unsigned int written = GetWindowsDirectory(explorerPath, _countof(explorerPath));
+                if ((written > 0) && (written <= MAX_PATH)) {
+                    if (PathAppend(explorerPath, FILES::EXPLORER_FILENAME) != FALSE) {
+                        std::wstringstream commandLineBuf;
+                        commandLineBuf << explorerPath << L" /select,\"" << *outputPath << L"\"";
 
-                    std::wstring programPath(explorerPath);
-                    std::wstring commandLine = commandLineBuf.str();
-                    STARTUPINFO startup = { 0 };
-                    PROCESS_INFORMATION process = { 0 };
+                        std::wstring programPath(explorerPath);
+                        std::wstring commandLine = commandLineBuf.str();
+                        STARTUPINFO startup = { 0 };
+                        PROCESS_INFORMATION process = { 0 };
 
-                    if (CreateProcess(nullptr, const_cast<wchar_t*>(commandLine.c_str()),
-                                      nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &process)
-                        != FALSE) {
-                        CloseHandle(process.hProcess);
-                        CloseHandle(process.hThread);
+                        if (CreateProcess(nullptr, const_cast<wchar_t*>(commandLine.c_str()),
+                                          nullptr, nullptr, FALSE, 0, nullptr, nullptr, &startup, &process)
+                            != FALSE) {
+                            CloseHandle(process.hProcess);
+                            CloseHandle(process.hThread);
 
-                        return S_OK;
+                            return S_OK;
+                        }
                     }
                 }
             }
@@ -241,7 +245,7 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR lpCmdLine, int) {
         dialog->setProgress(bytesCopied, bytesTotal);
     }, &dialog);
 
-    dialog.start(ProgressDialog::EstimateTime);
+    dialog.start(ProgressDialog::Options::EstimateTime);
     maker.start();
     dialog.stop();
 
