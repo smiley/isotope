@@ -10,3 +10,8 @@ So, what do I do?
 On Linux, it's as easy as piping one device into a file. On Windows, it's a little trickier but still super-simple. You just need a physical HANDLE, buffering and a way to make the user stop it because interfacing with disc drives in Windows is still horribly unstable.
 
 That's why I made this tiny utility.
+
+## How do I use this?
+Well, at this point you have to compile it with Visual Studio 2015, nothing more. It might also compile in standalone Windows SDK environments, but I haven't tested it yet. Compiled builds will be uploaded soon.
+
+After compiling, run the executable, pick a disc drive, and pick a file to write it into. Simple!
