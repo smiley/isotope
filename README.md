@@ -1,4 +1,4 @@
-# isotope
+# isotope [![Build status](https://ci.appveyor.com/api/projects/status/elwj9gjdn1pmceln/branch/master?svg=true)](https://ci.appveyor.com/project/smiley/isotope/branch/master)
 I rarely use discs nowadays. I think the last disc I actually used was the Windows 7 installation DVD, and that's because I didn't have a USB drive handy.
 
 However, I have a *bunch* of old games on discs and they all work (beautifully) on my modern Windows 10 PC. I have more than enough storage, and I'm not going to have a disc drive forever, so why not rip them?
