@@ -113,7 +113,7 @@ std::wstring GetSelectedDrive(const std::string& commandLine) {
             current.pszButtonText = buttonTextStr;
         }
 
-        taskDialog.cButtons = usableDrives.size();
+        taskDialog.cButtons = static_cast<UINT>(usableDrives.size());
         taskDialog.pButtons = driveSelections;
 
         taskDialog.nDefaultButton = IDCANCEL;

@@ -274,7 +274,7 @@ void FileDialog::setFileName(const std::wstring& filename) {
 void FileDialog::setFileTypes(const std::vector<COMDLG_FILTERSPEC>& fileTypes) {
     assert_instance();
 
-    THROW_IF_FAILED(m_instance->SetFileTypes(fileTypes.size(), fileTypes.data()));
+    THROW_IF_FAILED(m_instance->SetFileTypes(static_cast<UINT>(fileTypes.size()), fileTypes.data()));
 }
 
 void FileDialog::setDefaultExtension(const std::wstring& extension) {
