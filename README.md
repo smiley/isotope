@@ -12,6 +12,18 @@ On Linux, it's as easy as piping one device into a file. On Windows, it's a litt
 That's why I made this tiny utility.
 
 ## How do I use this?
-Well, at this point you have to compile it with Visual Studio 2015, nothing more. It might also compile in standalone Windows SDK environments, but I haven't tested it yet. Compiled builds will be uploaded soon.
+You can now download a build right on GitHub.
 
-After compiling, run the executable, pick a disc drive, and pick a file to write it into. Simple!
+1. [Download the latest release](https://github.com/smiley/isotope/releases/latest) (in your system's architecture)
+2. Drop it in `C:\Program Files\Isotope`
+3. Run the `register.reg` file
+4. Right-click your disc drive & pick "Rip with Isotope..." to convert it to an ISO
+
+You can also just run `isotope.exe`; no installation necessary.
+
+## Known issues
+- There's no installer. (But it's also self-contained)
+- Ripping is done on a logical level, reading the same disc partition you see in `Computer`. Meaning we'll only rip "the first" if the disc:
+  - Has more partitions;
+  - Cheats Windows by showing a smaller partition and transparently reads the rest (e.g.: DRM);
+  - Also has a Mac paritition you wish to rip.
