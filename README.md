@@ -15,7 +15,7 @@ That's why I made this tiny utility.
 You can now download a build right on GitHub.
 
 1. [Download the latest release](https://github.com/smiley/isotope/releases/latest) (in your system's architecture)
-2. Drop it in `C:\Program Files\Isotope`
+2. Drop it in `C:\Program Files\Isotope\isotope.exe`
 3. Run the `register.reg` file
 4. Right-click your disc drive & pick "Rip with Isotope..." to convert it to an ISO
 
