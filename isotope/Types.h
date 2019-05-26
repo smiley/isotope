@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <stdexcept>
 #include <string>
 
 #define always_assert(val, msg) \
