@@ -29,9 +29,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <RunWixToolsOutOfProc>true</RunWixToolsOutOfProc>
-    <OutputPath>$(SolutionDir)bin\$(Platform.Replace('x86', 'Win32').ToLower())\$(Configuration.ToLower())\</OutputPath>
-    <IntermediateOutputPath>$(SolutionDir)obj\$(Platform.Replace('x86', 'Win32').ToLower())\$(Configuration.ToLower())\</IntermediateOutputPath>
-    <CabinetCachePath>$(SolutionDir)obj\$(Platform.Replace('x86', 'Win32').ToLower())\$(Configuration.ToLower())\WiXCache\$(OutputName)_$(ProjectGuid)</CabinetCachePath>
+    <OutputPath>$(SolutionDir)bin\$(Platform.ToLower())\$(Configuration.ToLower())\</OutputPath>
+    <IntermediateOutputPath>$(SolutionDir)obj\$(Platform.ToLower())\$(Configuration.ToLower())\</IntermediateOutputPath>
+    <CabinetCachePath>$(SolutionDir)obj\$(Platform.ToLower())\$(Configuration.ToLower())\WiXCache\$(OutputName)_$(ProjectGuid)</CabinetCachePath>
     <LinkerAdditionalOptions>-b $(OutputPath)</LinkerAdditionalOptions>
     <ReuseCabinetCache>true</ReuseCabinetCache>
   </PropertyGroup>

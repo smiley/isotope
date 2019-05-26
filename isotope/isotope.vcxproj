@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)bin\$(Platform.ToLower())\$(Configuration.ToLower())\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform.ToLower())\$(Configuration.ToLower())\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform.Replace('Win32', 'x86').ToLower())\$(Configuration.ToLower())\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform.Replace('Win32', 'x86').ToLower())\$(Configuration.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
