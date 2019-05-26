@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?ifdef env.APPVEYOR_BUILD_NUMBER ?>
+    <?define BuildNumber = "$(env.APPVEYOR_BUILD_NUMBER)" ?>
+  <?else?>
+    <?define BuildNumber = "0" ?>
+  <?endif?>
+  
+  <?if $(var.Platform) = x64 ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?else ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?endif ?>
+  
+	<Product Id="*" Name="Isotope" Language="1033" Version="0.5.$(var.BuildNumber)" Manufacturer="Smiley Barry" UpgradeCode="{D226E862-9AFD-4CB2-9A50-6DC05937FB73}">
+		<Package InstallerVersion="500" Compressed="yes" InstallScope="perUser" />
+
+    <Property Id="ALLUSERS" Secure="yes" Value="2"/>
+    <Property Id="MSIINSTALLPERUSER" Secure="yes" Value="1" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <UIRef Id="WixUI_FeatureTree" />
+
+		<Feature Id="ProductFeature" Title="Main product" Level="1" Absent="disallow"
+             Description="The main EXE of [ProductName].">
+			<ComponentGroupRef Id="Binary" Primary="yes" />
+      <ComponentGroupRef Id="RemoveOnUninst"/>
+		</Feature>
+    <Feature Id="RegFeature" Title="Register right-click option" Level="1"
+             Description="Adds a &quot;Rip with [ProductName]&quot; option to the right-click menu of drives in Computer.">
+      <ComponentGroupRef Id="Registration" Primary="yes" />
+    </Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="$(var.PlatformProgramFilesFolder)">
+				<Directory Id="INSTALLFOLDER" Name="Isotope" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="Binary" Directory="INSTALLFOLDER">
+      <Component Id="CMP_IsotopeEXE">
+        <File Id="FILE_IsotopeEXE" 
+              Source="Isotope.exe"/>
+      </Component>
+		</ComponentGroup>
+    <ComponentGroup Id="Registration" Directory="INSTALLFOLDER">
+      <Component Id="CMP_DriveRightClick">
+        <RegistryKey Id="REG_DriveRightClick"
+                     Root="HKCU"
+                     Key="Software\Classes\Drive\shell\isotope"
+                     ForceDeleteOnUninstall="yes">
+          <RegistryValue Action="write"
+                         Type="string"
+                         Value="Rip with &amp;[ProductName]" />
+          <RegistryValue Name="Icon"
+                         Type="string"
+                         Value="[#FILE_IsotopeEXE]" />
+          <RegistryValue Name="Position"
+                         Type="string"
+                         Value="Bottom" />
+          <RegistryKey Key="command">
+            <RegistryValue KeyPath="yes"
+                           Action="write"
+                           Type="string"
+                           Value="&quot;[#FILE_IsotopeEXE]&quot; &quot;%1&quot;" />
+          </RegistryKey>
+        </RegistryKey>
+      </Component>
+    </ComponentGroup>
+    <ComponentGroup Id="RemoveOnUninst" Directory="INSTALLFOLDER">
+      <Component Id="CMPRM_IsotopeDIR"
+                 Guid="{4B046B82-5C7E-4D9B-B52D-08257B89A6E7}">
+        <RemoveFolder Id="RM_IsotopeDIR"
+                      On="uninstall"/>
+      </Component>
+    </ComponentGroup>
+	</Fragment>
+</Wix>
