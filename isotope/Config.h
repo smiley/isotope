@@ -35,7 +35,7 @@ namespace MESSAGES {
                                   "Or with no arguments to pick one interactively.";
 
     const auto* NO_DISCS = "You have several drives, but none contain a disc.";
-    const auto* NO_DRIVES = "You have no disc drives. Why are you even running this?";
+    const auto* NO_DRIVES = "No disc drives found.";
     const auto* UNKNOWN = L"Unknown";
     const auto* OPEN_FAILED_TITLE = L"Open failed";
     const auto* OPEN_FAILED_FULL = L"We tried to open the destination, but " \

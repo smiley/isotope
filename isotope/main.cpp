@@ -125,7 +125,7 @@ std::wstring GetSelectedDrive(const std::string& commandLine) {
             // Okay to exit here with a "success" value, as the user picked "no" interactively.
             ExitProcess(0);
         } else {
-            selectedDrive = usableDrives[chosenButton - 0x100];
+            selectedDrive = usableDrives[static_cast<size_t>(chosenButton) - 0x100];
         }
 
         for (const auto& selection : driveSelections) {
